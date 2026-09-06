@@ -19,7 +19,7 @@ export default function PricingPage() {
     setLoading('')
   }
   return <main className="pricing-page">
-    <header className="pricing-header"><Link href="/" className="back-link"><ArrowLeft size={15} /> Back to workspace</Link><div className="auth-brand"><div className="logo-mark"><span /></div><span>ZFile</span></div><Link href="/login" className="secondary-button">Sign in</Link></header>
+
     <section className="pricing-hero"><p className="eyebrow">Upgrade your workspace</p><h1>More space. More control.</h1><p className="subtitle">Everything you need to move files from raw assets to finished work.</p></section>
     {message && <div className="checkout-message">{message}</div>}
     <section className="pricing-grid">
