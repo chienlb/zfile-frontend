@@ -286,7 +286,7 @@ function SharePage({ onBack }: { onBack: () => void }) {
         <span className="share-secure"><LockKeyhole size={15} /> End-to-end encrypted</span>
       </div>
       
-      <div className="w-full max-w-[1240px] mx-auto mt-8 grid grid-cols-1 md:grid-cols-[1fr_360px] gap-10 px-6">
+      <div className="w-full max-w-[1600px] mx-auto mt-8 grid grid-cols-1 md:grid-cols-[1fr_360px] gap-10 px-6">
         <main className="share-card" style={{ margin: 0, width: '100%' }}>
           <div className="flex items-start justify-between mb-8">
             <div className="flex items-center gap-4">

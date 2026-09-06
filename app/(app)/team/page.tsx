@@ -34,7 +34,7 @@ export default function TeamPage() {
   return (
     <main className="tools-page">
 
-      <div className="max-w-[1240px] mx-auto mt-12 px-6">
+      <div className="max-w-[1600px] mx-auto mt-12 px-6">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-[24px] font-bold text-zinc-100">Team Members</h1>

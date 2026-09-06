@@ -37,7 +37,9 @@ import {
   Type,
   Settings2,
   Download,
-  TerminalSquare
+  TerminalSquare,
+  Clock,
+  Sparkles
 } from 'lucide-react'
 
 const tools = [
@@ -381,7 +383,7 @@ export default function ToolsPage() {
         <p className="subtitle mt-3 max-w-lg mx-auto text-[15px]">Professional grade file processing happening entirely within a secure, sandboxed environment.</p>
       </section>
 
-      <div className="tools-layout" style={{ gridTemplateColumns: '300px 1fr' }}>
+      <div className="tools-layout" style={{ gridTemplateColumns: '300px 1fr 320px' }}>
         <nav className="tools-list">
           {tools.map((tool, index) => {
             const Icon = tool.icon
@@ -422,6 +424,47 @@ export default function ToolsPage() {
             {renderWorkspace()}
           </div>
         </section>
+
+        {/* Right Sidebar - Recent & Tips */}
+        <aside className="hidden xl:flex flex-col gap-5">
+          <div className="bg-[#111318] border border-zinc-800 rounded-xl p-6">
+            <h3 className="text-[15px] font-semibold text-white mb-4 flex items-center gap-2"><Clock size={16} className="text-blue-400" /> Recent Exports</h3>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0"><FileImage size={18} /></div>
+                <div>
+                  <p className="text-[13px] font-medium text-zinc-200">hero-banner-v2.webp</p>
+                  <p className="text-[12px] text-zinc-500 mt-1">Compressed by 42% • 2m ago</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0"><Film size={18} /></div>
+                <div>
+                  <p className="text-[13px] font-medium text-zinc-200">demo-reel-720p.mp4</p>
+                  <p className="text-[12px] text-zinc-500 mt-1">Converted from MOV • 1h ago</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0"><FileText size={18} /></div>
+                <div>
+                  <p className="text-[13px] font-medium text-zinc-200">Q3_Report_Final.pdf</p>
+                  <p className="text-[12px] text-zinc-500 mt-1">Merged 3 files • 3h ago</p>
+                </div>
+              </div>
+            </div>
+            <button className="w-full text-center text-[13px] text-blue-400 mt-5 hover:text-blue-300">View all history</button>
+          </div>
+
+          <div className="bg-gradient-to-br from-[#111318] to-blue-900/10 border border-blue-500/20 rounded-xl p-6 relative overflow-hidden">
+            <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/20 rounded-full blur-[20px]" />
+            <h3 className="text-[15px] font-semibold text-white mb-2 flex items-center gap-2"><Sparkles size={16} className="text-amber-400" /> Pro Tip</h3>
+            <p className="text-[13px] text-zinc-400 leading-relaxed mb-4">You can drag and drop entire folders into the Studio to batch process multiple files at once. All processing happens locally in your browser.</p>
+            <div className="px-3 py-2 bg-black/40 rounded-lg border border-white/5 text-[12px] font-mono text-zinc-300 flex justify-between items-center">
+              <span>Batch processing</span>
+              <span className="text-emerald-400">Enabled</span>
+            </div>
+          </div>
+        </aside>
       </div>
     </main>
   )

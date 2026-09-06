@@ -32,7 +32,7 @@ const navGroups = [
     label: 'Workspace', 
     items: [
       { href: '/', label: 'Dashboard', icon: LayoutDashboard }, 
-      { href: '/studio', label: 'ZFile Studio', icon: WandSparkles }, 
+      { href: '/tools', label: 'Studio Tools', icon: RefreshCw }, 
       { href: '/ai', label: 'ZFile AI', icon: Sparkles }
     ] 
   },
@@ -49,7 +49,6 @@ const productNav = [
   { href: '/workspace/new', label: 'New Workspace', icon: Plus },
   { href: '/team', label: 'Team Members', icon: Users },
   { href: '/settings', label: 'Settings', icon: Settings2 },
-  { href: '/tools', label: 'Convert & Edit', icon: RefreshCw },
   { href: '/pricing', label: 'Upgrade plan', icon: Zap },
   { href: '/login', label: 'Sign in', icon: UserRound },
 ]

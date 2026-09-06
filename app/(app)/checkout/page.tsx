@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, Check, CreditCard, Lock, ShieldCheck, Zap } from 'lucide-react'
+import { ArrowLeft, Check, CreditCard, Lock, ShieldCheck, Zap, Tag, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 
 export default function CheckoutPage() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [voucher, setVoucher] = useState('')
+  const [voucherApplied, setVoucherApplied] = useState(false)
 
   const handlePayment = (e: React.FormEvent) => {
     e.preventDefault()
@@ -81,7 +83,7 @@ export default function CheckoutPage() {
             </div>
             
             <button type="submit" className="primary-button w-full h-[48px] text-[15px]" disabled={loading}>
-              {loading ? <><RefreshCw size={18} className="spin" /> Processing Payment...</> : <>Pay $144.00</>}
+              {loading ? <><RefreshCw size={18} className="spin" /> Processing Payment...</> : <>Pay ${voucherApplied ? '120.00' : '144.00'}</>}
             </button>
             
             <p className="text-center text-[12px] text-zinc-500 mt-6 flex items-center justify-center gap-2">
@@ -105,11 +107,36 @@ export default function CheckoutPage() {
                 <span className="text-zinc-500">Billed yearly</span>
                 <span className="text-emerald-400 text-[12px]">Save $48</span>
               </div>
+              {voucherApplied && (
+                <div className="flex justify-between items-center text-[14px]">
+                  <span className="text-zinc-300 flex items-center gap-2"><Tag size={14} className="text-blue-400" /> Voucher ({voucher})</span>
+                  <span className="text-emerald-400 font-medium">-$24.00</span>
+                </div>
+              )}
             </div>
+            
+            {!voucherApplied ? (
+              <div className="mb-6 flex gap-2">
+                <input 
+                  type="text" 
+                  placeholder="Promo code" 
+                  value={voucher}
+                  onChange={e => setVoucher(e.target.value)}
+                  className="bg-[#0d0f13] border border-zinc-800 rounded-md px-3 h-[36px] text-[13px] text-zinc-200 outline-none focus:border-blue-500 flex-1 transition-colors" 
+                />
+                <button 
+                  type="button"
+                  onClick={() => { if(voucher) setVoucherApplied(true) }}
+                  className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-4 h-[36px] rounded-md text-[13px] font-medium transition-colors"
+                >
+                  Apply
+                </button>
+              </div>
+            ) : null}
             
             <div className="pt-4 border-t border-zinc-800 flex justify-between items-center">
               <span className="text-[15px] font-medium text-zinc-200">Total</span>
-              <span className="text-[20px] font-bold text-white">$144.00</span>
+              <span className="text-[20px] font-bold text-white">${voucherApplied ? '120.00' : '144.00'}</span>
             </div>
           </div>
           

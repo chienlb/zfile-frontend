@@ -54,6 +54,8 @@ import {
   WandSparkles,
   X,
   Zap,
+  FolderInput,
+  Edit3
 } from 'lucide-react'
 
 type PageKey = 'dashboard' | 'studio' | 'aichat' | 'security' | 'audit' | 'share' | 'trash'
@@ -137,54 +139,206 @@ function Dashboard({ setPage }: { setPage: (page: PageKey) => void }) {
   const [toast, setToast] = useState('')
   const [uploaded, setUploaded] = useState(false)
   const [previewFile, setPreviewFile] = useState<FileItem | null>(null)
+  const [contextMenu, setContextMenu] = useState<{ x: number, y: number, file: FileItem } | null>(null)
+
   const toggle = (id: number) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])
   const allSelected = selected.length === files.length
   const notify = (message: string) => { setToast(message); setTimeout(() => setToast(''), 2200) }
+
+  // Close context menu on click anywhere
+  useEffect(() => {
+    const closeMenu = () => setContextMenu(null)
+    window.addEventListener('click', closeMenu)
+    return () => window.removeEventListener('click', closeMenu)
+  }, [])
+
   return <div className="page-content dashboard-page">
-    <div className="page-heading"><div><p className="eyebrow mb-2">Thursday, January 25, 2024</p><h1>Good morning, Jordan <span className="heading-dot">.</span></h1><p className="subtitle">Here&apos;s what&apos;s happening with your workspace.</p></div><button className="primary-button" onClick={() => document.querySelector<HTMLInputElement>('input[type=file]')?.click()}><Plus size={16} /> Upload files</button></div>
+    
+    {/* Premium Hero Banner */}
+    <div className="w-full rounded-2xl bg-gradient-to-br from-blue-900/40 via-indigo-900/20 to-purple-900/40 border border-blue-500/20 p-8 mb-8 relative overflow-hidden flex justify-between items-center shadow-2xl">
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')] bg-cover bg-center opacity-10 mix-blend-overlay" />
+      <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/30 blur-[80px] rounded-full" />
+      
+      <div className="relative z-10">
+        <p className="eyebrow mb-2 text-blue-300 flex items-center gap-2"><Sparkles size={14} /> Thursday, January 25, 2024</p>
+        <h1 className="text-[32px] font-bold text-white mb-2">Good morning, Jordan <span className="text-blue-500">.</span></h1>
+        <p className="text-[15px] text-zinc-400 max-w-md">Your workspace is looking great. You have 24 shared files and plenty of storage left for your upcoming projects.</p>
+      </div>
+      
+      <div className="relative z-10 hidden md:flex items-center gap-3">
+        <button className="secondary-button h-[42px] px-5 bg-black/40 backdrop-blur border-zinc-700 hover:bg-black/60"><WandSparkles size={16} /> Try AI Tools</button>
+        <button className="primary-button h-[42px] px-6 text-[14px] shadow-blue-500/20 shadow-lg" onClick={() => document.querySelector<HTMLInputElement>('input[type=file]')?.click()}>
+          <Plus size={18} /> Upload files
+        </button>
+      </div>
+    </div>
+
     {uploaded && <div className="upload-notice"><Check size={15} /> Files queued for secure upload <button onClick={() => setUploaded(false)}><X size={14} /></button></div>}
+    
+    {/* Quick Access Folders */}
+    <div className="mb-8">
+      <h2 className="text-[16px] font-semibold text-zinc-200 mb-4 flex items-center gap-2"><FolderInput size={18} className="text-zinc-500" /> Quick Access</h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { name: 'Q1 Marketing', files: '12 items', color: 'bg-blue-500/10 text-blue-400' },
+          { name: 'Design Assets', files: '48 items', color: 'bg-purple-500/10 text-purple-400' },
+          { name: 'Invoices 2024', files: '5 items', color: 'bg-emerald-500/10 text-emerald-400' },
+          { name: 'Shared with Team', files: '24 items', color: 'bg-amber-500/10 text-amber-400' }
+        ].map(folder => (
+          <div key={folder.name} className="p-4 rounded-xl border border-zinc-800 bg-[#111318] hover:bg-[#16181e] cursor-pointer transition-colors flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${folder.color}`}>
+              <FolderInput size={20} />
+            </div>
+            <div>
+              <p className="text-[14px] font-medium text-zinc-200">{folder.name}</p>
+              <p className="text-[12px] text-zinc-500">{folder.files}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
     <UploadZone onUpload={() => setUploaded(true)} />
     <div className="stats-grid"><StatCard label="Storage used" value="6.8 GB" meta="+12.4% this month" icon={HardDrive} tone="stat-blue" /><StatCard label="Shared files" value="24" meta="+8.1% this month" icon={Link2} tone="stat-purple" /><StatCard label="Downloads" value="1,284" meta="+24.8% this week" icon={ArrowDownToLine} tone="stat-amber" /><StatCard label="Security score" value="94%" meta="Excellent standing" icon={ShieldCheck} tone="stat-emerald" /></div>
-    <section className="files-section"><div className="section-heading"><div><h2>My files</h2><p className="section-subtitle">Your most recent uploads and shared files.</p></div><div className="section-actions"><button className="secondary-button"><ListFilter size={15} /> Filter <ChevronDown size={14} /></button><button className="icon-button"><SlidersHorizontal size={17} /></button></div></div><div className="table-shell"><div className="table-head"><div className="check-wrap"><input type="checkbox" checked={allSelected} onChange={() => setSelected(allSelected ? [] : files.map((file) => file.id))} /></div><span>Name</span><span>Modified</span><span>Size</span><span>Status</span><span /></div>{files.map((file) => <div className="file-row cursor-pointer" key={file.id} onClick={(e) => { if ((e.target as HTMLElement).tagName !== 'INPUT' && (e.target as HTMLElement).tagName !== 'BUTTON' && (e.target as HTMLElement).closest('button') === null) setPreviewFile(file) }}><div className="check-wrap"><input type="checkbox" checked={selected.includes(file.id)} onChange={() => toggle(file.id)} /></div><div className="file-name"><FileIcon type={file.type} color={file.color} /><div className="min-w-0"><p className="truncate text-[14px] font-medium text-zinc-200">{file.name}</p><p className="text-[13px] capitalize text-zinc-500">{file.type === 'archive' ? 'Archive' : file.type}</p></div></div><span className="muted-cell">{file.modified}</span><span className="muted-cell">{file.size}</span><span>{file.shared ? <span className="status shared"><Link2 size={12} /> Shared</span> : <span className="status private"><LockKeyhole size={12} /> Private</span>}</span><button className="row-more" onClick={(e) => { e.stopPropagation(); notify(`Options for ${file.name}`) }}><MoreHorizontal size={17} /></button></div>)}</div><button className="view-all" onClick={() => notify('All files view is coming soon')}>View all files <ArrowUpRight size={14} /></button></section>
+    <section className="files-section"><div className="section-heading"><div><h2>My files</h2><p className="section-subtitle">Your most recent uploads and shared files.</p></div><div className="section-actions"><button className="secondary-button"><ListFilter size={15} /> Filter <ChevronDown size={14} /></button><button className="icon-button"><SlidersHorizontal size={17} /></button></div></div><div className="table-shell"><div className="table-head"><div className="check-wrap"><input type="checkbox" checked={allSelected} onChange={() => setSelected(allSelected ? [] : files.map((file) => file.id))} /></div><span>Name</span><span>Modified</span><span>Size</span><span>Status</span><span /></div>{files.map((file) => <div className="file-row cursor-pointer" key={file.id} onClick={(e) => { if ((e.target as HTMLElement).tagName !== 'INPUT' && (e.target as HTMLElement).tagName !== 'BUTTON' && (e.target as HTMLElement).closest('button') === null) setPreviewFile(file) }} onContextMenu={(e) => { e.preventDefault(); setContextMenu({ x: e.clientX, y: e.clientY, file }); }}><div className="check-wrap"><input type="checkbox" checked={selected.includes(file.id)} onChange={() => toggle(file.id)} /></div><div className="file-name"><FileIcon type={file.type} color={file.color} /><div className="min-w-0"><p className="truncate text-[14px] font-medium text-zinc-200">{file.name}</p><p className="text-[13px] capitalize text-zinc-500">{file.type === 'archive' ? 'Archive' : file.type}</p></div></div><span className="muted-cell">{file.modified}</span><span className="muted-cell">{file.size}</span><span>{file.shared ? <span className="status shared"><Link2 size={12} /> Shared</span> : <span className="status private"><LockKeyhole size={12} /> Private</span>}</span><button className="row-more" onClick={(e) => { e.stopPropagation(); setContextMenu({ x: e.clientX, y: e.clientY, file }); }}><MoreHorizontal size={17} /></button></div>)}</div><button className="view-all" onClick={() => notify('All files view is coming soon')}>View all files <ArrowUpRight size={14} /></button></section>
     <div className="bottom-grid"><section className="activity-card"><div className="section-heading"><div><h2>Recent activity</h2><p className="section-subtitle">Your latest workspace events.</p></div><Activity size={17} className="text-zinc-500" /></div>{[['product-demo-2024.mp4', 'You shared a file', '2h ago', FileVideo], ['brand-assets-final.zip', 'You uploaded a file', '5h ago', FileArchive], ['hero-banner@2x.png', 'Alex downloaded a file', 'Yesterday', FileImage]].map(([name, action, time, Icon], index) => <div className="activity-row" key={index}><div className="mini-activity-icon"><Icon size={14} /></div><div className="min-w-0 flex-1"><p className="truncate text-[14px] text-zinc-300">{action} <b className="font-medium text-zinc-100">{name}</b></p><p className="mt-1 text-[13px] text-zinc-600">{time}</p></div><ChevronRight size={14} className="text-zinc-600" /></div>)}</section><section className="insight-card"><div className="insight-glow" /><div className="flex items-center gap-2"><div className="insight-icon"><Sparkles size={15} /></div><span className="eyebrow text-blue-300">ZFile insight</span></div><h3>Keep your workspace organized</h3><p>Files you haven&apos;t opened in 30 days could be archived to free up <b>1.4 GB</b> of space.</p><button className="text-button" onClick={() => notify('Archive suggestions opened')}>Review suggestions <ArrowUpRight size={14} /></button></section></div>
-    {selected.length > 0 && <div className="floating-toolbar"><div className="toolbar-count"><span>{selected.length}</span> selected</div><div className="toolbar-divider" /><button onClick={() => notify('Preparing ZIP download')}><Archive size={16} /> Download ZIP</button><button onClick={() => notify('Share link copied')}><Link2 size={16} /> Share</button><button className="toolbar-icon" onClick={() => setSelected([])}><X size={17} /></button></div>}
+    
+    {/* Floating Toolbar with New Bulk Actions */}
+    {selected.length > 0 && <div className="floating-toolbar"><div className="toolbar-count"><span>{selected.length}</span> selected</div><div className="toolbar-divider" /><button onClick={() => notify('Preparing ZIP download')}><Download size={16} /> Download</button><button onClick={() => notify('Share link copied')}><Link2 size={16} /> Share</button><button onClick={() => notify('Files moved')}><FolderInput size={16} /> Move</button><button className="text-red-400 hover:bg-red-500/10" onClick={() => { setSelected([]); notify(`${selected.length} files moved to trash`); }}><Trash2 size={16} /> Delete</button><button className="toolbar-icon" onClick={() => setSelected([])}><X size={17} /></button></div>}
+    
     {toast && <div className="toast"><Check size={15} /> {toast}</div>}
+    
+    {/* Context Menu Component */}
+    {contextMenu && (
+      <div 
+        className="context-menu" 
+        style={{ top: contextMenu.y, left: contextMenu.x }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button onClick={() => { setPreviewFile(contextMenu.file); setContextMenu(null); }}><MousePointerClick size={15} /> Preview</button>
+        <div className="cm-divider" />
+        <button onClick={() => { notify('Analyzing file with AI...'); setContextMenu(null); }} className="cm-ai"><Bot size={15} /> Summarize with AI <Sparkles size={12} className="ml-auto" /></button>
+        <div className="cm-divider" />
+        <button onClick={() => { notify('Share dialog opened'); setContextMenu(null); }}><Link2 size={15} /> Share link</button>
+        <button onClick={() => { notify('Renaming file...'); setContextMenu(null); }}><Edit3 size={15} /> Rename</button>
+        <button onClick={() => { notify('Move dialog opened'); setContextMenu(null); }}><FolderInput size={15} /> Move to folder</button>
+        <button onClick={() => { notify('Downloading file...'); setContextMenu(null); }}><Download size={15} /> Download</button>
+        <div className="cm-divider" />
+        <button className="cm-danger" onClick={() => { notify('Moved to trash'); setContextMenu(null); }}><Trash2 size={15} /> Move to trash</button>
+      </div>
+    )}
     {previewFile && <FilePreviewPanel file={previewFile} onClose={() => setPreviewFile(null)} />}
   </div>
 }
 
 function FilePreviewPanel({ file, onClose }: { file: FileItem; onClose: () => void }) {
-  return (
-    <>
-      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity" onClick={onClose} />
-      <div className="fixed right-0 top-0 bottom-0 w-[400px] bg-[#0f1115] border-l border-zinc-800 z-50 p-6 flex flex-col shadow-2xl overflow-y-auto slide-in-right">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-[16px] font-bold text-zinc-200">File Details</h2>
-          <button className="icon-button" onClick={onClose}><X size={18} /></button>
-        </div>
-        
-        <div className="w-full h-[220px] rounded-xl bg-[#171a21] border border-zinc-800 flex flex-col items-center justify-center mb-6 text-zinc-500">
-          <div className="scale-150 mb-3"><FileIcon type={file.type} color={file.color} /></div>
-          <p className="text-[11px] uppercase tracking-wider">{file.type}</p>
-        </div>
-        
-        <h3 className="text-[18px] font-bold text-zinc-100 mb-1">{file.name}</h3>
-        <p className="text-[13px] text-zinc-500 mb-6 capitalize">{file.type === 'archive' ? 'Archive' : file.type} • {file.size}</p>
-        
-        <div className="flex gap-3 mb-8">
-          <button className="primary-button flex-1 justify-center h-[36px]"><Download size={16} /> Download</button>
-          <button className="secondary-button flex-1 justify-center h-[36px]"><Link2 size={16} /> Share</button>
-        </div>
-        
-        <div className="space-y-6">
-          <div>
-            <h4 className="text-[13px] font-medium text-zinc-300 mb-3 border-b border-zinc-800 pb-2">Information</h4>
-            <div className="space-y-3 text-[13px]">
-              <div className="flex justify-between"><span className="text-zinc-500">Modified</span><span className="text-zinc-200">{file.modified}</span></div>
-              <div className="flex justify-between"><span className="text-zinc-500">Created</span><span className="text-zinc-200">Jan 12, 2024</span></div>
-              <div className="flex justify-between"><span className="text-zinc-500">Owner</span><span className="text-zinc-200">Jordan Davis</span></div>
+  const [analyzing, setAnalyzing] = useState(false)
+  const [summary, setSummary] = useState('')
+
+  const renderMedia = () => {
+    switch (file.type) {
+      case 'image':
+        return <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center rounded-lg" />
+      case 'video':
+        return (
+          <div className="w-full h-full bg-black rounded-lg flex items-center justify-center relative overflow-hidden group">
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center opacity-50" />
+            <button className="w-16 h-16 rounded-full bg-blue-600/80 backdrop-blur text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform z-10">
+              <Play size={24} className="ml-1" />
+            </button>
+            <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3 bg-black/60 backdrop-blur p-3 rounded-lg z-10">
+              <Play size={16} className="text-white" />
+              <div className="flex-1 h-1.5 bg-zinc-700 rounded-full overflow-hidden"><div className="w-1/3 h-full bg-blue-500 rounded-full" /></div>
+              <span className="text-[12px] text-zinc-300 font-mono">00:42 / 02:15</span>
             </div>
           </div>
+        )
+      case 'text':
+        return (
+          <div className="w-full h-full bg-[#1e1e1e] rounded-lg p-8 overflow-y-auto font-mono text-[14px] text-zinc-300 shadow-inner text-left leading-relaxed">
+            <h1 className="text-xl font-bold text-white mb-4 border-b border-zinc-700 pb-2">Launch Notes</h1>
+            <p className="mb-4">1. Market analysis complete.<br/>2. Brand assets finalized and approved.<br/>3. Website deployment scheduled for next week.</p>
+            <p>Ensure all stakeholders are notified prior to the DNS switch.</p>
+          </div>
+        )
+      default:
+        return (
+          <div className="w-full h-full bg-[#171a21] border border-zinc-800 rounded-lg flex flex-col items-center justify-center text-zinc-500">
+            <div className="scale-150 mb-4"><FileIcon type={file.type} color={file.color} /></div>
+            <p className="text-[14px] font-medium text-zinc-400">Preview not available</p>
+            <p className="text-[12px] mt-1">Download to view this file type</p>
+          </div>
+        )
+    }
+  }
+
+  const handleAI = () => {
+    setAnalyzing(true)
+    setTimeout(() => {
+      setAnalyzing(false)
+      setSummary(`AI Summary: This ${file.type} appears to contain marketing assets related to the Q1 Launch. Key topics include deployment schedules and stakeholder communication.`)
+    }, 2000)
+  }
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 transition-opacity flex items-center justify-center p-6" onClick={onClose}>
+        <div className="w-full max-w-6xl h-[85vh] bg-[#0c0e12] border border-zinc-800 rounded-2xl shadow-2xl flex overflow-hidden slide-in-up" onClick={(e) => e.stopPropagation()}>
+          
+          {/* Main Preview Area */}
+          <div className="flex-1 p-6 flex flex-col bg-black/20">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <FileIcon type={file.type} color={file.color} />
+                <h3 className="text-[18px] font-bold text-zinc-100">{file.name}</h3>
+              </div>
+              <div className="flex gap-2">
+                <button className="icon-button" onClick={() => {}}><Download size={18} /></button>
+                <button className="icon-button" onClick={onClose}><X size={18} /></button>
+              </div>
+            </div>
+            
+            <div className="flex-1 w-full flex items-center justify-center pb-6">
+              {renderMedia()}
+            </div>
+          </div>
+
+          {/* Right Sidebar - Details & AI */}
+          <div className="w-[340px] bg-[#111318] border-l border-zinc-800 p-6 flex flex-col">
+            <h4 className="text-[14px] font-bold text-zinc-200 mb-4 uppercase tracking-wider">File Info</h4>
+            <div className="space-y-4 text-[13px] border-b border-zinc-800 pb-6 mb-6">
+              <div className="flex justify-between"><span className="text-zinc-500">Type</span><span className="text-zinc-200 capitalize">{file.type}</span></div>
+              <div className="flex justify-between"><span className="text-zinc-500">Size</span><span className="text-zinc-200">{file.size}</span></div>
+              <div className="flex justify-between"><span className="text-zinc-500">Modified</span><span className="text-zinc-200">{file.modified}</span></div>
+              <div className="flex justify-between"><span className="text-zinc-500">Owner</span><span className="text-zinc-200">Jordan Davis</span></div>
+            </div>
+
+            <div className="ai-summary-card">
+              <div className="flex items-center gap-2 mb-3 text-blue-400 font-semibold">
+                <Bot size={18} /> ZFile AI
+              </div>
+              {!summary && !analyzing && (
+                <div className="text-center">
+                  <p className="text-[13px] text-zinc-400 mb-3">Generate a smart summary of this file.</p>
+                  <button className="primary-button w-full justify-center h-[32px] text-[12px]" onClick={handleAI}>
+                    <Sparkles size={14} /> Analyze File
+                  </button>
+                </div>
+              )}
+              {analyzing && (
+                <div className="flex flex-col items-center justify-center py-4">
+                  <Bot size={24} className="text-blue-500 animate-pulse mb-3" />
+                  <p className="text-[12px] text-zinc-400 animate-pulse">Reading contents...</p>
+                </div>
+              )}
+              {summary && (
+                <div className="text-[13px] text-zinc-300 leading-relaxed bg-[#0c0e12] p-3 rounded-lg border border-zinc-800/50">
+                  {summary}
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
       </div>
     </>
