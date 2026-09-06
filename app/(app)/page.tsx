@@ -55,7 +55,8 @@ import {
   X,
   Zap,
   FolderInput,
-  Edit3
+  Edit3,
+  MousePointerClick
 } from 'lucide-react'
 
 type PageKey = 'dashboard' | 'studio' | 'aichat' | 'security' | 'audit' | 'share' | 'trash'

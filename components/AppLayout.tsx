@@ -24,7 +24,8 @@ import {
   WandSparkles,
   X,
   Zap,
-  ArrowUpRight
+  ArrowUpRight,
+  ShieldAlert
 } from 'lucide-react'
 
 const navGroups = [
@@ -50,6 +51,7 @@ const productNav = [
   { href: '/team', label: 'Team Members', icon: Users },
   { href: '/settings', label: 'Settings', icon: Settings2 },
   { href: '/pricing', label: 'Upgrade plan', icon: Zap },
+  { href: '/admin', label: 'Admin Panel', icon: ShieldAlert },
   { href: '/login', label: 'Sign in', icon: UserRound },
 ]
 
