@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, Bell, Key, Moon, Palette, Shield, Smartphone, User, Check } from 'lucide-react'
+import { ArrowLeft, Bell, Key, Moon, Palette, Shield, Smartphone, User, Check, Code2, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 
 export default function SettingsPage() {
@@ -43,6 +43,15 @@ export default function SettingsPage() {
               onClick={() => setActiveTab('appearance')}
             >
               <Palette size={16} /> Appearance
+            </button>
+            <div className="pt-4 pb-2">
+              <div className="h-px bg-zinc-800/60 w-full" />
+            </div>
+            <button 
+              className={`w-full text-left px-3 py-2.5 rounded-lg text-[14px] flex items-center gap-3 transition-colors ${activeTab === 'developer' ? 'bg-emerald-500/10 text-emerald-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'}`}
+              onClick={() => setActiveTab('developer')}
+            >
+              <Code2 size={16} className={activeTab === 'developer' ? 'text-emerald-400' : ''} /> Developer API
             </button>
           </nav>
         </aside>
@@ -130,6 +139,50 @@ export default function SettingsPage() {
               <Moon size={48} className="text-zinc-700 mb-4" />
               <h2 className="text-[18px] font-medium text-zinc-300 mb-2">Coming Soon</h2>
               <p className="text-[14px] text-zinc-500">This section is currently under development.</p>
+            </div>
+          )}
+
+          {activeTab === 'developer' && (
+            <div>
+              <div className="flex items-start justify-between mb-8">
+                <div>
+                  <h1 className="text-[22px] font-bold mb-1 flex items-center gap-2">
+                    Developer API
+                  </h1>
+                  <p className="text-[14px] text-zinc-500">Access your API keys and integrate ZFile with your applications.</p>
+                </div>
+                <Link href="/partner">
+                  <button className="secondary-button h-[36px] bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 px-4 flex items-center gap-2 transition-colors">
+                    Open Developer Portal <ExternalLink size={14} />
+                  </button>
+                </Link>
+              </div>
+
+              <div className="space-y-6">
+                <div className="p-6 border border-zinc-800 rounded-xl bg-zinc-900/30">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-[15px] font-medium text-zinc-200 mb-1">API Credentials</h3>
+                      <p className="text-[13px] text-zinc-500 max-w-md">Generate secret keys to authenticate your API requests. For advanced usage metrics and webhook setup, visit the Developer Portal.</p>
+                    </div>
+                    <button className="primary-button h-[32px] px-4 text-[13px]">Generate New Key</button>
+                  </div>
+                  
+                  <div className="mt-6 flex flex-col gap-3">
+                    {/* Dummy API Key Row */}
+                    <div className="flex items-center justify-between p-3 bg-[#0d0f13] border border-zinc-800 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Key size={14} className="text-emerald-500" />
+                        <div>
+                          <p className="text-[13px] font-medium text-zinc-200">Default Production Key</p>
+                          <p className="text-[12px] font-mono text-zinc-500 mt-0.5">pk_live_8f92************************3a2c</p>
+                        </div>
+                      </div>
+                      <span className="text-[12px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Active</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </section>

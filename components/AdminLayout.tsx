@@ -14,7 +14,13 @@ import {
   Users,
   X,
   Database,
-  Globe
+  Globe,
+  ToggleLeft,
+  MessageSquare,
+  Wrench,
+  HardDrive,
+  Ticket,
+  Server
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -34,17 +40,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const navItems = [
+  const adminNavItems = [
     { href: '/admin', label: 'Overview', icon: LayoutDashboard },
     { href: '/admin/users', label: 'Users Management', icon: Users },
     { href: '/admin/workspaces', label: 'Workspaces', icon: Database },
+    { href: '/admin/vouchers', label: 'Vouchers & Promos', icon: Ticket },
+    { href: '/admin/feedback', label: 'User Feedback', icon: MessageSquare },
+  ]
+
+  const systemNavItems = [
+    { href: '/admin/features', label: 'Feature Toggles', icon: ToggleLeft },
+    { href: '/admin/server', label: 'Server Status', icon: Server },
+    { href: '/admin/backups', label: 'System Backups', icon: HardDrive },
+    { href: '/admin/maintenance', label: 'Maintenance Mode', icon: Wrench },
     { href: '/admin/settings', label: 'System Settings', icon: Settings },
   ]
 
   return (
-    <div className="app-layout">
+    <div className="app-shell">
       {mobileOpen && (
-        <div className="mobile-backdrop" onClick={() => setMobileOpen(false)} />
+        <div className="mobile-backdrop fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setMobileOpen(false)} />
       )}
 
       <aside className={`sidebar ${mobileOpen ? 'sidebar-open' : ''} border-r border-indigo-500/10 bg-[#07090c]`}>
@@ -69,7 +84,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <nav className="sidebar-nav">
           <div className="nav-group">
             <p className="nav-label text-indigo-200/50">Administration</p>
-            {navItems.map((item) => {
+            {adminNavItems.map((item) => {
+              const Icon = item.icon
+              const active = pathname === item.href
+              return (
+                <Link key={item.href} href={item.href}>
+                  <button className={`nav-item w-full ${active ? 'bg-indigo-500/10 text-indigo-300' : 'hover:bg-zinc-800/50'}`}>
+                    <Icon size={17} className={active ? 'text-indigo-400' : ''} />
+                    <span>{item.label}</span>
+                  </button>
+                </Link>
+              )
+            })}
+          </div>
+
+          <div className="nav-group mt-6">
+            <p className="nav-label text-indigo-200/50">System & Operations</p>
+            {systemNavItems.map((item) => {
               const Icon = item.icon
               const active = pathname === item.href
               return (
@@ -109,8 +140,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </aside>
 
-      <div className="main-area">
-        <header className="topbar border-b border-zinc-800/50 bg-[#0a0c10]/80 backdrop-blur-xl">
+      <div className="main-area flex flex-col h-screen overflow-hidden">
+        <header className="topbar border-b border-zinc-800/50 bg-[#0a0c10]/80 backdrop-blur-xl shrink-0">
           <button className="icon-button menu-button" onClick={() => setMobileOpen(true)}>
             <Menu size={20} />
           </button>
@@ -129,7 +160,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </button>
           </div>
         </header>
-        {children}
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
       </div>
     </div>
   )
