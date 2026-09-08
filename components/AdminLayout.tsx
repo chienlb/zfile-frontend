@@ -51,6 +51,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const systemNavItems = [
     { href: '/admin/features', label: 'Feature Toggles', icon: ToggleLeft },
     { href: '/admin/server', label: 'Server Status', icon: Server },
+    { href: '/admin/queue', label: 'Processing Queue', icon: Activity },
+    { href: '/admin/workers', label: 'Worker Monitoring', icon: Database },
+    { href: '/admin/abuse', label: 'Abuse Reports', icon: ShieldAlert },
+    { href: '/admin/audit', label: 'Audit Logs', icon: Database },
     { href: '/admin/backups', label: 'System Backups', icon: HardDrive },
     { href: '/admin/maintenance', label: 'Maintenance Mode', icon: Wrench },
     { href: '/admin/settings', label: 'System Settings', icon: Settings },

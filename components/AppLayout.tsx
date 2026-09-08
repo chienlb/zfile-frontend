@@ -37,6 +37,20 @@ const navGroups = [
       { href: '/ai', label: 'ZFile AI', icon: Sparkles }
     ] 
   },
+  {
+    label: 'PDF Tools',
+    items: [
+      { href: '/tools/pdf/merge', label: 'Merge PDF', icon: Link2 },
+      { href: '/tools/pdf/split', label: 'Split PDF', icon: RefreshCw }
+    ]
+  },
+  {
+    label: 'Advanced AI',
+    items: [
+      { href: '/ai/data-analysis', label: 'Data Analysis', icon: LayoutDashboard },
+      { href: '/ai/ocr', label: 'OCR Extraction', icon: RefreshCw }
+    ]
+  },
   { 
     label: 'Manage', 
     items: [
